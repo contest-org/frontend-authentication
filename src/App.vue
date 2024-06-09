@@ -1,30 +1,53 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="foreground">
+    <Logo />
+    <Auth />
   </div>
-  <HelloWorld msg="Vite + Vue" />
+
+  <div class="full-screen-background" :style="{ backgroundImage: 'url(' + backgroundImage + ')' }"></div>
 </template>
 
+<script setup>
+import Logo from './components/Logo.vue';
+import Auth from './components/Auth.vue';
+import { ref, onMounted, onBeforeUnmount } from "vue";
+
+const backgroundImage = ref('');
+
+const checkScreenWidth = () => {
+  const screenWidth = window.innerWidth;
+
+  if (screenWidth >= 768) {
+    backgroundImage.value = './public/desktop.jpeg';
+  } else {
+    backgroundImage.value = './public/mobile.jpg';
+  }
+};
+
+onMounted(() => {
+  checkScreenWidth();
+  window.addEventListener('resize', checkScreenWidth);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', checkScreenWidth);
+});
+</script>
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.foreground {
+  position: relative;
+  z-index: 10;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.full-screen-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
 }
 </style>
